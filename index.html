@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodGuard - AI Food Intervention</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --green-border: #86efac;
+      
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --amber-border: #fcd34d;
+      
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --red-border: #fca5a5;
+      
+      --blue: #3b82f6;
+      --blue-light: #eff6ff;
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+      
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-pill: 100px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 5rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .header-left .app-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .header-left .app-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: 'DM Mono', monospace;
+    }
+    
+    .live-clock {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.3rem 0.85rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .ai-badge {
+      font-size: 0.72rem;
+      font-family: 'DM Mono', monospace;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      padding: 0.2rem 0.65rem;
+      margin-bottom: 1.25rem;
+      border: 1px solid transparent;
+    }
+    .badge-ai {
+      background: var(--green-light);
+      color: var(--green);
+      border-color: var(--green-border);
+    }
+    .badge-fallback {
+      background: var(--blue-light);
+      color: var(--blue);
+      border-color: #bfdbfe;
+    }
+
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 1.25rem;
+      color: var(--text);
+    }
+
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-family: 'DM Mono', monospace;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      background: var(--surface-2);
+      transition: all 0.15s ease;
+    }
+    input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+      outline: none;
+    }
+    
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .btn-analyze {
+      width: 100%;
+      margin-top: 1.1rem;
+      padding: 0.85rem;
+      background: var(--blue);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      letter-spacing: 0.01em;
+      transition: all 0.15s ease;
+    }
+    .btn-analyze:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(59,130,246,0.35);
+    }
+    .btn-analyze:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .error-inline {
+      color: var(--red);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    /* Shimmer Loader */
+    .skeleton-box {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius);
+      margin-bottom: 0.75rem;
+    }
+    @keyframes shimmer { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
+
+    /* Results layout */
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 0.75rem;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    /* Card 1: Score & Verdict */
+    .card-score {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .score-large {
+      font-family: 'DM Mono', monospace;
+      font-size: 3rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .score-out-of {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+    .score-bar-bg {
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border);
+      margin-top: 0.6rem;
+      width: 180px;
+    }
+    .score-bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 4px;
+      transition: width 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .verdict-badge {
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.6rem 1.4rem;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      display: block;
+      text-align: center;
+    }
+    .intervention-pill {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      padding: 0.2rem 0.65rem;
+      text-align: center;
+      margin-top: 0.4rem;
+      display: block;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Card 2: Coach */
+    .coach-text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    /* Card 3: Reasoning */
+    .reason-row {
+      display: flex;
+      flex-direction: row;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .reason-row:last-child { border-bottom: none; }
+    .reason-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .reason-text {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    /* Card 4: Pattern & Risk */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    @media (max-width: 480px) { .risk-grid { grid-template-columns: 1fr; } }
+    .risk-subcard {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+    }
+    .pattern-none {
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 0.85rem;
+    }
+    .pattern-detected {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--amber);
+      text-transform: capitalize;
+    }
+    .risk-text {
+      font-size: 0.83rem;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    /* Card 5: Alternatives */
+    .alt-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .alt-pill {
+      background: var(--blue-light);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-pill);
+      padding: 0.4rem 0.9rem;
+      font-size: 0.8rem;
+      color: #1d4ed8;
+      font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .alt-pill:hover {
+      background: #dbeafe;
+      border-color: #93c5fd;
+      transform: translateY(-1px);
+    }
+
+    /* Card 6: Confidence */
+    .confidence-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .conf-bar-bg {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      width: 200px;
+      margin-top: 0.4rem;
+    }
+    .conf-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0;
+      transition: width 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .conf-pct {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 500;
+    }
+
+    /* Footer Meta */
+    .footer-meta {
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    /* Error Card */
+    .error-card {
+      border: 1.5px solid var(--red-border);
+      background: var(--red-light);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: row;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+    .error-icon {
+      font-size: 1.25rem;
+    }
+    .error-title {
+      font-weight: 600;
+      color: var(--red);
+    }
+    .error-msg {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-left">
+      <div class="app-title">🥗 FoodGuard</div>
+      <div class="app-subtitle">AI-Powered Food Intervention</div>
+    </div>
+    <div class="header-right">
+      <div class="live-clock" id="live-clock">--:--:--</div>
+    </div>
+  </header>
+  
+  <div id="ai-status-badge" class="ai-badge">...</div>
+
+  <div class="input-card">
+    <div class="card-title">What are you about to eat?</div>
+    
+    <div class="form-group">
+      <label for="food">Food Item</label>
+      <input type="text" id="food" placeholder="e.g. chips, salad, pizza" aria-required="true" />
+      <div class="error-inline" id="err-food">Please enter a food item.</div>
+    </div>
+    
+    <div class="input-row">
+      <div class="form-group">
+        <label for="time">Time (HH:MM)</label>
+        <input type="time" id="time" aria-required="true" />
+        <div class="error-inline" id="err-time">Please enter a time.</div>
+      </div>
+      <div class="form-group">
+        <label for="mood">Mood (optional)</label>
+        <input type="text" id="mood" placeholder="e.g. stressed, hungry" />
+      </div>
+    </div>
+    
+    <button class="btn-analyze" id="analyze-btn">Analyze</button>
+  </div>
+
+  <div id="result-area"></div>
+</div>
+
+<script>
+const API_BASE = window.location.origin;
+let healthData = { firebase: false, ai_powered: false };
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const now = new Date();
+  document.getElementById("time").value = now.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
+  
+  setInterval(() => {
+    const d = new Date();
+    document.getElementById("live-clock").textContent = d.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }, 1000);
+
+  try {
+    const res = await fetch(API_BASE + "/health");
+    if(res.ok) {
+      healthData = await res.json();
+    }
+  } catch(e) {}
+  
+  const badge = document.getElementById("ai-status-badge");
+  if(healthData.ai_powered) {
+    badge.className = "ai-badge badge-ai";
+    badge.textContent = "✦ AI Analysis Active";
+  } else {
+    badge.className = "ai-badge badge-fallback";
+    badge.textContent = "◎ Smart Fallback Mode";
+  }
+});
+
+document.getElementById("analyze-btn").addEventListener("click", analyze);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+    analyze();
+  }
+});
+
+async function analyze() {
+  const food = document.getElementById("food").value.trim();
+  const time = document.getElementById("time").value.trim();
+  const mood = document.getElementById("mood").value.trim();
+  
+  const errFood = document.getElementById("err-food");
+  const errTime = document.getElementById("err-time");
+  errFood.style.display = "none";
+  errTime.style.display = "none";
+  
+  if(!food) { errFood.style.display = "block"; return; }
+  if(!time) { errTime.style.display = "block"; return; }
+  
+  const btn = document.getElementById("analyze-btn");
+  btn.disabled = true;
+  btn.textContent = "Analyzing...";
+  
+  const resultArea = document.getElementById("result-area");
+  resultArea.innerHTML = `
+    <div class="skeleton-box" style="height: 80px;"></div>
+    <div class="skeleton-box" style="height: 120px;"></div>
+    <div class="skeleton-box" style="height: 90px;"></div>
+    <div class="skeleton-box" style="height: 80px;"></div>
+    <div class="skeleton-box" style="height: 100px;"></div>
+  `;
+  
+  const body = { food, time };
+  if(mood) body.mood = mood;
+  
+  try {
+    const res = await fetch(API_BASE + "/analyze", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(body)
+    });
+    
+    if(!res.ok) {
+      const errJson = await res.json().catch(()=>({}));
+      showError(errJson.detail || errJson.error || "Server Error");
+    } else {
+      const data = await res.json();
+      renderResults(data);
+    }
+  } catch(e) {
+    showError("Could not connect to server.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Analyze";
+  }
+}
+
+function showError(msg) {
+  document.getElementById("result-area").innerHTML = `
+    <div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <div>
+        <div class="error-title">Analysis Failed</div>
+        <div class="error-msg">${msg}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderResults(data) {
+  const area = document.getElementById("result-area");
+  area.innerHTML = "";
+  
+  const {health_score, decision, intervention_level, intervention_message, reasoning, pattern_detected, future_risk, better_alternatives, confidence} = data;
+  
+  let colorClass = "";
+  let colorVar = "";
+  let bgVar = "";
+  let rgbBg = "";
+  
+  if(health_score >= 8 || decision === "good") {
+    colorVar = "var(--green)";
+    bgVar = "var(--green-light)";
+    rgbBg = "rgba(220,252,231,0.5)";
+  } else if(health_score >= 5 || decision === "moderate") {
+    colorVar = "var(--amber)";
+    bgVar = "var(--amber-light)";
+    rgbBg = "rgba(254,243,199,0.5)";
+  } else {
+    colorVar = "var(--red)";
+    bgVar = "var(--red-light)";
+    rgbBg = "rgba(254,226,226,0.5)";
+  }
+  
+  const scoreCard = `
+    <div class="result-card" style="animation-delay: 0ms;">
+      <div class="card-score">
+        <div class="left-score">
+          <div class="score-large" style="color: ${colorVar};">${health_score}<span class="score-out-of">/10</span></div>
+          <div class="section-label" style="margin-bottom:0;">HEALTH SCORE</div>
+          <div class="score-bar-bg"><div class="score-bar-fill" id="anim-score" style="background:${colorVar};"></div></div>
+        </div>
+        <div class="right-badge">
+          <div class="verdict-badge" style="background:${bgVar}; color:${colorVar}; border: 1.5px solid ${colorVar};">${decision.toUpperCase()}</div>
+          <div class="intervention-pill">${intervention_level} intervention</div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  const coachCard = `
+    <div class="result-card" style="animation-delay: 80ms; border-left: 3px solid ${colorVar}; background: ${rgbBg};">
+      <div class="section-label">COACH SAYS</div>
+      <div class="coach-text">"${intervention_message}"</div>
+    </div>
+  `;
+  
+  const reasonHtml = reasoning.map(r => `
+    <div class="reason-row">
+      <div class="reason-dot" style="background:${colorVar};"></div>
+      <div class="reason-text">${r}</div>
+    </div>
+  `).join("");
+  const reasonCard = `
+    <div class="result-card" style="animation-delay: 160ms;">
+      <div class="section-label">AI ANALYSIS</div>
+      ${reasonHtml}
+    </div>
+  `;
+  
+  let patternHtml = pattern_detected 
+    ? `<div class="pattern-detected">${pattern_detected.replace(/_/g, ' ')}</div>` 
+    : `<div class="pattern-none">None detected</div>`;
+    
+  const patternCard = `
+    <div class="result-card" style="animation-delay: 240ms; background: transparent; border: none; padding: 0; box-shadow: none;">
+      <div class="risk-grid">
+        <div class="risk-subcard">
+          <div class="section-label">PATTERN</div>
+          ${patternHtml}
+        </div>
+        <div class="risk-subcard">
+          <div class="section-label">FUTURE RISK</div>
+          <div class="risk-text">${future_risk}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  const altHtml = better_alternatives.map(a => `<div class="alt-pill">${a}</div>`).join("");
+  const altCard = `
+    <div class="result-card" style="animation-delay: 320ms;">
+      <div class="section-label">BETTER ALTERNATIVES</div>
+      <div class="alt-wrap">${altHtml}</div>
+    </div>
+  `;
+  
+  const confPct = (confidence * 100).toFixed(0);
+  const confCard = `
+    <div class="result-card" style="animation-delay: 400ms;">
+      <div class="confidence-row">
+        <div>
+          <div class="section-label" style="margin-bottom:0;">CONFIDENCE</div>
+          <div class="conf-bar-bg"><div class="conf-bar-fill" id="anim-conf" style="background:${colorVar};"></div></div>
+        </div>
+        <div class="conf-pct" style="color:${colorVar};">${confPct}%</div>
+      </div>
+    </div>
+  `;
+  
+  let footerStr = "";
+  if(healthData.ai_powered && healthData.firebase) footerStr = "✦ AI-powered · Firebase synced";
+  else if(healthData.ai_powered && !healthData.firebase) footerStr = "✦ AI-powered · Saved locally";
+  else if(!healthData.ai_powered && healthData.firebase) footerStr = "◎ Smart mode · Firebase synced";
+  else footerStr = "◎ Smart mode · Saved locally";
+  
+  const footerMeta = `<div class="footer-meta" style="animation-delay: 480ms;">${footerStr}</div>`;
+  
+  area.innerHTML = scoreCard + coachCard + reasonCard + patternCard + altCard + confCard + footerMeta;
+  
+  setTimeout(() => {
+    const sBar = document.getElementById("anim-score");
+    if(sBar) sBar.style.width = (health_score * 10) + "%";
+    const cBar = document.getElementById("anim-conf");
+    if(cBar) cBar.style.width = confPct + "%";
+  }, 60);
+}
+</script>
+</body>
+</html>
