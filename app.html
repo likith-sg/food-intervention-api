@@ -6,85 +6,79 @@
   <title>FoodGuard - Main App</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    body { background: transparent; }
     .dashboard-layout { max-width: 1200px; margin: 0 auto; padding: 6rem 2rem 2rem; display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; align-items: start; }
     @media (max-width: 900px) { .dashboard-layout { grid-template-columns: 1fr; padding: 5rem 1rem 1rem; } }
     
     header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .live-clock { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 0.5rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.875rem; color: var(--text); box-shadow: var(--shadow-sm); }
+    .live-clock { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 0.5rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.875rem; color: var(--text); box-shadow: var(--shadow-sm); }
     .badge { font-family: 'DM Mono', monospace; font-size: 0.75rem; border-radius: var(--radius-pill); padding: 0.35rem 0.85rem; display: inline-flex; border: 1px solid transparent; margin-bottom: 1.5rem; font-weight: 600; }
-    .badge-ai { background: rgba(52, 199, 89, 0.15); color: var(--green); border-color: rgba(52, 199, 89, 0.3); }
-    .badge-fallback { background: rgba(0, 122, 255, 0.15); color: var(--blue); border-color: rgba(0, 122, 255, 0.3); }
+    .badge-ai { background: #E5F9E0; color: var(--green); border-color: rgba(52, 199, 89, 0.3); }
+    .badge-fallback { background: #E5F0FF; color: var(--blue); border-color: rgba(0, 122, 255, 0.3); }
 
-    .card { background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.6); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; }
-    .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); letter-spacing: -0.01em; }
+    .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); letter-spacing: -0.02em; }
     .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
     /* Results */
-    .result-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1rem; opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s var(--smooth) forwards; }
-    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .result-card { background: var(--bg-secondary); border: 1px solid rgba(0,0,0,0.02); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1rem; opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s var(--spring) forwards; }
     .section-label { font-family: 'DM Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.75rem; }
     .score-large { font-family: 'DM Mono', monospace; font-size: 3.5rem; font-weight: 500; line-height: 1; letter-spacing: -0.05em; }
     .score-out-of { font-size: 1.25rem; color: var(--text-secondary); }
     .score-bar-bg { height: 8px; border-radius: 4px; background: rgba(0,0,0,0.05); margin-top: 1rem; width: 100%; overflow: hidden; }
-    .score-bar-fill { height: 100%; width: 0; border-radius: 4px; transition: width 1.5s var(--spring); }
+    .score-bar-fill { height: 100%; width: 0; border-radius: 4px; transition: width 1s var(--spring); }
     .verdict-badge { font-weight: 700; font-size: 1rem; padding: 0.5rem 1.25rem; border-radius: var(--radius-pill); text-transform: uppercase; display: inline-block; }
-    .intervention-pill { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); border-radius: var(--radius-pill); padding: 0.25rem 0.75rem; margin-top: 0.5rem; display: inline-block; }
-    .coach-text { font-size: 1.1rem; line-height: 1.5; color: var(--text); font-style: italic; }
+    .intervention-pill { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-pill); padding: 0.25rem 0.75rem; margin-top: 0.5rem; display: inline-block; }
+    .coach-text { font-size: 1.1rem; line-height: 1.5; color: var(--text); font-weight: 500; }
     .reason-row { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
     .reason-row:last-child { border-bottom: none; }
     .reason-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
     .reason-text { font-size: 0.95rem; line-height: 1.5; color: var(--text-secondary); }
     .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .risk-subcard { background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-sm); padding: 1rem; }
+    .risk-subcard { background: var(--bg); border-radius: var(--radius-sm); padding: 1rem; }
     .alt-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .alt-pill { background: rgba(0, 122, 255, 0.1); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: var(--radius-pill); padding: 0.4rem 0.9rem; font-size: 0.85rem; color: var(--blue); font-family: 'DM Mono', monospace; }
+    .alt-pill { background: #E5F0FF; color: var(--blue); border-radius: var(--radius-pill); padding: 0.4rem 0.9rem; font-size: 0.85rem; font-family: 'DM Mono', monospace; font-weight: 500; }
     .error-inline { color: var(--red); font-size: 0.8rem; margin-top: 0.25rem; display: none; }
 
     /* Custom Time Input */
-    .time-display { width: 100%; padding: 0.875rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); font-size: 1.1rem; font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); cursor: pointer; text-align: center; transition: all 0.2s; }
+    .time-display { width: 100%; padding: 1rem 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-secondary); font-size: 1.1rem; font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); cursor: pointer; text-align: center; transition: all 0.2s; }
     .time-display:active { transform: scale(0.98); }
     
     /* Food of the Day Card */
-    .food-of-day { position: relative; color: white; padding: 1.5rem; border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; min-height: 240px; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; transition: transform 0.3s var(--smooth); }
-    .food-of-day:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .food-of-day { position: relative; color: white; padding: 1.5rem; border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; min-height: 280px; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; transition: transform 0.3s var(--spring); }
+    .food-of-day:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
     .food-of-day img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; transition: transform 0.5s ease; }
-    .food-of-day:hover img { transform: scale(1.05); }
+    .food-of-day:hover img { transform: scale(1.03); }
     .food-of-day .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 100%); z-index: 1; }
     .food-of-day .content { position: relative; z-index: 2; }
     .fod-badge { background: rgba(255, 149, 0, 0.9); backdrop-filter: blur(5px); color: white; padding: 0.3rem 0.8rem; border-radius: var(--radius-pill); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.5rem; }
-    .fod-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; letter-spacing: -0.02em; line-height: 1.2; }
-    .fod-details { font-family: 'DM Mono', monospace; font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.4; }
+    .fod-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.3rem; letter-spacing: -0.02em; line-height: 1.2; }
+    .fod-details { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: rgba(255,255,255,0.9); line-height: 1.4; }
 
-    .skeleton-box { background: linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md); margin-bottom: 1rem; }
+    .skeleton-box { background: linear-gradient(90deg, #E5E5EA 25%, #F2F2F7 50%, #E5E5EA 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md); margin-bottom: 1rem; }
     @keyframes shimmer { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
   </style>
 </head>
 <body>
-  <div class="bg-gradient-mesh"></div>
-  <div class="bg-overlay" style="background: rgba(242, 242, 247, 0.7);"></div>
-
   <nav>
-    <a href="/" class="logo">🥗 Food<span>Guard</span></a>
+    <a href="/" class="logo">🥗 FoodGuard</a>
     <div>
       <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out</button>
     </div>
   </nav>
 
-  <div class="dashboard-layout animate-fade-in">
+  <div class="dashboard-layout stagger-1">
     <!-- LEFT COLUMN: INPUT -->
     <div>
       <header>
         <div>
           <h1 style="font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em;">Analysis</h1>
-          <p style="color: var(--text-secondary); font-size: 0.9rem;">Real-time Intervention Engine</p>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">Real-time Intervention Engine</p>
         </div>
         <div class="live-clock" id="live-clock">--:--:--</div>
       </header>
 
       <div id="ai-status-badge" class="badge">...</div>
 
-      <div class="card">
+      <div class="card mb-8">
         <div class="card-title">What's on the menu?</div>
         
         <div class="input-group">
@@ -113,7 +107,7 @@
         <img src="" id="fod-img" alt="Food of the Day">
         <div class="overlay"></div>
         <div class="content">
-          <div class="fod-badge">Food of the Day</div>
+          <div class="fod-badge">Featured</div>
           <div class="fod-title" id="fod-title">Loading...</div>
           <div class="fod-details" id="fod-details"></div>
         </div>
@@ -139,34 +133,35 @@
         <div class="time-picker-tab" id="tab-wheel" onclick="switchTab('wheel')">Scroll Wheel</div>
       </div>
 
-      <!-- Decoupled Analog Clock -->
+      <!-- Fix: Fully Independent Analog Clock -->
       <div id="view-clock">
         <div style="text-align: center; margin-bottom: 1.5rem; font-family: 'DM Mono', monospace; font-size: 2.5rem; font-weight: 500; letter-spacing: -0.05em;" id="clock-display">12:00</div>
         <div class="clock-container" id="clock-container">
           <div class="clock-center"></div>
-          <div class="clock-hand hour" id="hour-hand"></div>
-          <div class="clock-hand minute" id="minute-hand"></div>
+          
+          <div class="clock-hand hour" id="hour-hand">
+            <div class="hand-grabber"></div>
+          </div>
+          <div class="clock-hand minute" id="minute-hand">
+            <div class="hand-grabber"></div>
+          </div>
         </div>
-        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-secondary);">Drag the inner hand for hours, outer hand for minutes.</p>
+        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-secondary);">Drag the hour or minute hand directly to set time.</p>
       </div>
 
       <!-- iOS Scrollable Wheel Picker -->
       <div id="view-wheel" class="hidden">
         <div style="text-align: center; margin-bottom: 1rem; font-family: 'DM Mono', monospace; font-size: 2.5rem; font-weight: 500; letter-spacing: -0.05em; color: var(--blue);" id="wheel-display">12:00</div>
         <div class="wheel-container">
-          <div class="wheel-selector" id="wheel-hours" onscroll="onWheelScroll('hour')">
-            <!-- Populated via JS -->
-          </div>
+          <div class="wheel-selector" id="wheel-hours" onscroll="onWheelScroll('hour')"></div>
           <div class="wheel-colon">:</div>
-          <div class="wheel-selector" id="wheel-minutes" onscroll="onWheelScroll('minute')">
-            <!-- Populated via JS -->
-          </div>
+          <div class="wheel-selector" id="wheel-minutes" onscroll="onWheelScroll('minute')"></div>
         </div>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
         <button class="btn btn-secondary" onclick="closeTimePicker()">Cancel</button>
-        <button class="btn btn-primary" onclick="confirmTimePicker()">Set Time</button>
+        <button class="btn btn-primary" onclick="confirmTimePicker()">Done</button>
       </div>
     </div>
   </div>
@@ -176,19 +171,17 @@
     // DYNAMIC FOOD OF THE DAY
     // ----------------------------------------------------
     const foodOptions = [
-      { img: "/assets/food_of_day.png", title: "Avocado Toast & Poached Egg", details: "🕒 Ideal Time: 08:30 AM <br>⚖️ Portion: 1 slice, 1/2 avocado, 1 egg" },
-      { img: "/assets/food_smoothie.png", title: "Berry Granola Smoothie Bowl", details: "🕒 Ideal Time: 09:00 AM <br>⚖️ Portion: 1 medium bowl, mixed berries" },
-      { img: "/assets/food_salmon.png", title: "Grilled Salmon Green Salad", details: "🕒 Ideal Time: 01:00 PM <br>⚖️ Portion: 150g salmon, 2 cups greens" },
-      { img: "/assets/hero.png", title: "Vibrant Veggie Platter", details: "🕒 Ideal Time: 04:00 PM <br>⚖️ Portion: Assorted raw veggies with hummus" }
+      { img: "/assets/food_of_day.png", title: "Avocado Toast & Poached Egg", details: "🕒 Best Time: 08:30 AM <br>⚖️ Portion: 1 slice, 1/2 avocado, 1 egg" },
+      { img: "/assets/food_smoothie.png", title: "Berry Granola Smoothie Bowl", details: "🕒 Best Time: 09:00 AM <br>⚖️ Portion: 1 medium bowl, mixed berries" },
+      { img: "/assets/food_salmon.png", title: "Grilled Salmon Green Salad", details: "🕒 Best Time: 01:00 PM <br>⚖️ Portion: 150g salmon, 2 cups greens" },
+      { img: "/assets/hero.png", title: "Vibrant Veggie Platter", details: "🕒 Best Time: 04:00 PM <br>⚖️ Portion: Assorted raw veggies with hummus" }
     ];
 
     function setFoodOfTheDay() {
-      // Hash the current date to select a daily deterministic food
-      const today = new Date().toDateString(); // e.g., "Wed Apr 29 2026"
+      const today = new Date().toDateString();
       let hash = 0;
       for(let i = 0; i < today.length; i++) { hash = today.charCodeAt(i) + ((hash << 5) - hash); }
       const index = Math.abs(hash) % foodOptions.length;
-      
       const selected = foodOptions[index];
       document.getElementById("fod-img").src = selected.img;
       document.getElementById("fod-title").textContent = selected.title;
@@ -196,7 +189,7 @@
     }
 
     // ----------------------------------------------------
-    // AUTH & APP LOGIC
+    // APP LOGIC
     // ----------------------------------------------------
     if (!localStorage.getItem("fg_token")) window.location.href = "/auth";
     function logout() { localStorage.removeItem("fg_token"); window.location.href = "/"; }
@@ -206,12 +199,9 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       setFoodOfTheDay();
-
-      // Init Time
       const now = new Date();
       selectedHour = now.getHours(); selectedMinute = now.getMinutes();
-      updateDisplays(); confirmTimePicker(); // Sets the initial input value
-      initWheel();
+      updateDisplays(); confirmTimePicker(); initWheel();
       
       setInterval(() => {
         const d = new Date();
@@ -224,7 +214,7 @@
       if(healthData.ai_powered) {
         badge.className = "badge badge-ai"; badge.textContent = "✦ AI Analysis Active";
       } else {
-        badge.className = "badge badge-fallback"; badge.textContent = "◎ Smart Fallback Mode";
+        badge.className = "badge badge-fallback"; badge.textContent = "◎ Fallback Mode";
       }
     });
 
@@ -250,15 +240,15 @@
     }
 
     function showError(msg) {
-      document.getElementById("result-area").innerHTML = `<div class="card" style="border-color: var(--red); background: rgba(255, 59, 48, 0.05);"><h3 style="color: var(--red); margin-bottom: 0.5rem;">Analysis Failed</h3><p style="color: var(--text-secondary);">${msg}</p></div>`;
+      document.getElementById("result-area").innerHTML = `<div class="card" style="border-color: var(--red); background: #FFF5F5;"><h3 style="color: var(--red); margin-bottom: 0.5rem;">Analysis Failed</h3><p style="color: var(--text-secondary);">${msg}</p></div>`;
     }
 
     function renderResults(data) {
       const area = document.getElementById("result-area"); area.innerHTML = "";
       const {health_score, decision, intervention_level, intervention_message, reasoning, pattern_detected, future_risk, better_alternatives} = data;
-      let cVar = "var(--green)", bgVar = "rgba(52, 199, 89, 0.1)";
-      if(health_score < 5 || decision === "bad") { cVar = "var(--red)"; bgVar = "rgba(255, 59, 48, 0.1)"; } 
-      else if(health_score < 8 || decision === "moderate") { cVar = "var(--orange)"; bgVar = "rgba(255, 149, 0, 0.1)"; }
+      let cVar = "var(--green)", bgVar = "#E5F9E0";
+      if(health_score < 5 || decision === "bad") { cVar = "var(--red)"; bgVar = "#FFF5F5"; } 
+      else if(health_score < 8 || decision === "moderate") { cVar = "var(--orange)"; bgVar = "#FFF8E5"; }
 
       area.innerHTML = `
         <div class="result-card" style="animation-delay: 0ms; display: flex; justify-content: space-between; align-items: center;">
@@ -267,7 +257,7 @@
         </div>
         <div class="result-card" style="animation-delay: 100ms; border-left: 4px solid ${cVar};"><div class="section-label">AI COACH</div><div class="coach-text">"${intervention_message}"</div></div>
         <div class="result-card" style="animation-delay: 200ms;"><div class="section-label">DETAILED ANALYSIS</div>${reasoning.map(r => `<div class="reason-row"><div class="reason-dot" style="background:${cVar};"></div><div class="reason-text">${r}</div></div>`).join("")}</div>
-        <div class="risk-grid" style="animation-delay: 300ms; animation: fadeUp 0.5s var(--smooth) forwards; opacity: 0; transform: translateY(20px);">
+        <div class="risk-grid" style="animation-delay: 300ms; animation: fadeUp 0.5s var(--spring) forwards; opacity: 0; transform: translateY(20px);">
           <div class="risk-subcard"><div class="section-label">PATTERN DETECTED</div><div style="font-weight: 600; color: var(--text);">${pattern_detected ? pattern_detected.replace(/_/g, ' ') : 'None detected'}</div></div>
           <div class="risk-subcard"><div class="section-label">FUTURE RISK</div><div style="font-size: 0.85rem; color: var(--text-secondary);">${future_risk}</div></div>
         </div>
@@ -277,17 +267,15 @@
     }
 
     // ----------------------------------------------------
-    // ADVANCED TIME PICKER (Analog & Wheel)
+    // TIME PICKER (Analog & Wheel)
     // ----------------------------------------------------
     let selectedHour = 12, selectedMinute = 0, currentView = 'clock';
-    let draggingHand = null; // 'hour', 'minute', or null
-
+    
     const modal = document.getElementById('time-picker-modal');
     const clockDisplay = document.getElementById('clock-display');
     const wheelDisplay = document.getElementById('wheel-display');
     const hourHand = document.getElementById('hour-hand');
     const minuteHand = document.getElementById('minute-hand');
-    const clockContainer = document.getElementById('clock-container');
     const wheelHours = document.getElementById('wheel-hours');
     const wheelMins = document.getElementById('wheel-minutes');
 
@@ -297,8 +285,7 @@
       const tStr = `${hStr}:${mStr}`;
       clockDisplay.textContent = tStr; wheelDisplay.textContent = tStr;
       
-      // Update analog hands (fully independent)
-      const hourAngle = (selectedHour % 12) * 30 + (selectedMinute / 2); // Hour hand still shows minute offset visually, but dragging is independent
+      const hourAngle = (selectedHour % 12) * 30 + (selectedMinute / 2);
       const minuteAngle = selectedMinute * 6;
       hourHand.style.transform = `rotate(${hourAngle}deg)`;
       minuteHand.style.transform = `rotate(${minuteAngle}deg)`;
@@ -324,35 +311,44 @@
       if (tab === 'wheel') syncWheelToState();
     }
 
-    // --- Decoupled Analog Clock Logic ---
-    clockContainer.addEventListener('mousedown', (e) => { 
-      // Determine which hand is grabbed based on distance from center
-      const rect = clockContainer.getBoundingClientRect();
-      const x = e.clientX - (rect.left + rect.width / 2);
-      const y = (rect.top + rect.height / 2) - e.clientY;
-      const distance = Math.sqrt(x*x + y*y);
-      // Hour hand is shorter (radius ~ 75), Minute is longer (radius ~ 105)
-      draggingHand = (distance < 70) ? 'hour' : 'minute';
-      updateClockFromEvent(e); 
-    });
-    window.addEventListener('mouseup', () => { draggingHand = null; });
-    window.addEventListener('mousemove', (e) => { if (draggingHand) updateClockFromEvent(e); });
+    // --- INDEPENDENT ANALOG CLOCK FIX ---
+    let activeHand = null;
 
-    function updateClockFromEvent(e) {
-      const rect = clockContainer.getBoundingClientRect();
-      const x = e.clientX - (rect.left + rect.width / 2);
-      const y = (rect.top + rect.height / 2) - e.clientY;
+    // Attach listeners directly to the hands
+    hourHand.addEventListener('mousedown', (e) => { e.stopPropagation(); activeHand = 'hour'; });
+    hourHand.addEventListener('touchstart', (e) => { e.stopPropagation(); activeHand = 'hour'; }, {passive: false});
+    
+    minuteHand.addEventListener('mousedown', (e) => { e.stopPropagation(); activeHand = 'minute'; });
+    minuteHand.addEventListener('touchstart', (e) => { e.stopPropagation(); activeHand = 'minute'; }, {passive: false});
+
+    window.addEventListener('mouseup', () => { activeHand = null; });
+    window.addEventListener('touchend', () => { activeHand = null; });
+
+    window.addEventListener('mousemove', handleDrag);
+    window.addEventListener('touchmove', handleDrag, {passive: false});
+
+    function handleDrag(e) {
+      if (!activeHand) return;
+      e.preventDefault(); // prevent scrolling
+      
+      let clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      let clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      if(clientX === undefined) return;
+
+      const rect = document.getElementById('clock-container').getBoundingClientRect();
+      const x = clientX - (rect.left + rect.width / 2);
+      const y = (rect.top + rect.height / 2) - clientY;
       let angle = Math.atan2(x, y) * (180 / Math.PI);
       if (angle < 0) angle += 360;
 
-      if (draggingHand === 'hour') {
+      if (activeHand === 'hour') {
         let h = Math.round(angle / 30);
         if (h >= 12) h -= 12;
-        // Keep AM/PM state from current selectedHour
+        // Keep AM/PM state
         if (selectedHour >= 12) h += 12;
         if (h === 24) h = 12;
         selectedHour = h;
-      } else if (draggingHand === 'minute') {
+      } else if (activeHand === 'minute') {
         let m = Math.round(angle / 6);
         if (m === 60) m = 0;
         selectedMinute = m;
@@ -360,22 +356,20 @@
       updateDisplays();
     }
 
-    // --- iOS Wheel Logic ---
+    // --- WHEEL LOGIC ---
     function initWheel() {
-      // Create filler items for padding
       let hHtml = `<div class="wheel-item"></div><div class="wheel-item"></div>`;
-      for(let i=0; i<24; i++) hHtml += `<div class="wheel-item" id="wh-${i}">${String(i).padStart(2, '0')}</div>`;
+      for(let i=0; i<24; i++) hHtml += `<div class="wheel-item">${String(i).padStart(2, '0')}</div>`;
       hHtml += `<div class="wheel-item"></div><div class="wheel-item"></div>`;
       wheelHours.innerHTML = hHtml;
 
       let mHtml = `<div class="wheel-item"></div><div class="wheel-item"></div>`;
-      for(let i=0; i<60; i++) mHtml += `<div class="wheel-item" id="wm-${i}">${String(i).padStart(2, '0')}</div>`;
+      for(let i=0; i<60; i++) mHtml += `<div class="wheel-item">${String(i).padStart(2, '0')}</div>`;
       mHtml += `<div class="wheel-item"></div><div class="wheel-item"></div>`;
       wheelMins.innerHTML = mHtml;
     }
 
     function syncWheelToState() {
-      // item height is 40px, padding items is 2
       wheelHours.scrollTop = selectedHour * 40;
       wheelMins.scrollTop = selectedMinute * 40;
       updateWheelActiveStyles();
@@ -394,16 +388,12 @@
         }
         updateDisplays();
         updateWheelActiveStyles();
-      }, 50); // debounce scroll
+      }, 50);
     }
 
     function updateWheelActiveStyles() {
-      document.querySelectorAll('#wheel-hours .wheel-item').forEach((el, i) => {
-        el.classList.toggle('active', i - 2 === selectedHour); // -2 because of 2 padding items
-      });
-      document.querySelectorAll('#wheel-minutes .wheel-item').forEach((el, i) => {
-        el.classList.toggle('active', i - 2 === selectedMinute);
-      });
+      document.querySelectorAll('#wheel-hours .wheel-item').forEach((el, i) => { el.classList.toggle('active', i - 2 === selectedHour); });
+      document.querySelectorAll('#wheel-minutes .wheel-item').forEach((el, i) => { el.classList.toggle('active', i - 2 === selectedMinute); });
     }
   </script>
 </body>

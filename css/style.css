@@ -1,102 +1,92 @@
 :root {
-  --bg: #ffffff;
-  --bg-secondary: #f2f2f7; /* iOS grouped background */
+  --bg: #F5F5F7; /* iOS standard light background */
+  --bg-secondary: #FFFFFF;
   --bg-modal: rgba(0, 0, 0, 0.4);
-  --text: #000000;
-  --text-secondary: #8e8e93; /* iOS secondary text */
-  --border: #c6c6c8;
+  --text: #1D1D1F;
+  --text-secondary: #86868B;
+  --border: #D2D2D7;
   
-  --red: #ff3b30;
-  --blue: #007aff;
-  --green: #34c759;
-  --orange: #ff9500;
-  --yellow: #ffcc00;
-  --white: #ffffff;
+  --red: #FF3B30;
+  --blue: #007AFF;
+  --green: #34C759;
+  --orange: #FF9500;
+  --yellow: #FFCC00;
+  --white: #FFFFFF;
 
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
 
-  --radius-sm: 10px; /* iOS corner radius */
-  --radius-md: 20px;
-  --radius-lg: 32px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
   --radius-pill: 9999px;
   
-  --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  --smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --spring: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; -webkit-font-smoothing: antialiased; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
 
 body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
 
-/* Animations */
-@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-.animate-fade-in { animation: fadeIn 0.6s var(--smooth) forwards; }
-.animate-float { animation: float 4s ease-in-out infinite; }
+/* Elegant Staggered Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-/* Dynamic iOS Gradients */
-.bg-gradient-mesh {
-  background-image: url('/assets/bg_gradient.png');
-  background-size: cover;
-  background-position: center;
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: -2;
-  filter: blur(10px);
-  transform: scale(1.1);
-}
-.bg-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(255, 255, 255, 0.75); /* Frosty overlay */
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  z-index: -1;
-}
+.stagger-1 { animation: fadeUp 0.8s var(--spring) 0.1s forwards; opacity: 0; }
+.stagger-2 { animation: fadeUp 0.8s var(--spring) 0.2s forwards; opacity: 0; }
+.stagger-3 { animation: fadeUp 0.8s var(--spring) 0.3s forwards; opacity: 0; }
+.stagger-4 { animation: fadeUp 0.8s var(--spring) 0.4s forwards; opacity: 0; }
 
 /* Components */
-.btn { padding: 0.875rem 1.5rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 1.05rem; cursor: pointer; border: none; transition: all 0.2s var(--smooth); display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
-.btn-primary { background: var(--blue); color: var(--white); box-shadow: 0 4px 14px 0 rgba(0, 122, 255, 0.39); }
+.btn { padding: 1rem 2rem; border-radius: var(--radius-pill); font-weight: 600; font-size: 1.05rem; cursor: pointer; border: none; transition: all 0.2s var(--spring); display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
+.btn-primary { background: var(--blue); color: var(--white); }
 .btn-primary:active { transform: scale(0.96); opacity: 0.9; }
-.btn-secondary { background: var(--bg-secondary); color: var(--blue); border: none; }
-.btn-secondary:active { background: #e5e5ea; transform: scale(0.96); }
-
-.glass-card { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: var(--shadow-lg); border-radius: var(--radius-md); }
+.btn-secondary { background: #E5E5EA; color: var(--blue); }
+.btn-secondary:active { transform: scale(0.96); background: #D1D1D6; }
 
 nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; position: absolute; top: 0; left: 0; right: 0; z-index: 100; }
-.logo { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem; color: var(--text); text-decoration: none; }
-.logo span { color: var(--green); }
+.logo { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; display: flex; align-items: center; gap: 0.5rem; color: var(--text); text-decoration: none; }
 
-.input-group { margin-bottom: 1.25rem; }
-.input-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
-.input-group input { width: 100%; padding: 0.875rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--white); font-size: 1.05rem; transition: all 0.2s var(--smooth); outline: none; color: var(--text); }
+.input-group { margin-bottom: 1.5rem; }
+.input-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.input-group input { width: 100%; padding: 1rem 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-secondary); font-size: 1.05rem; transition: all 0.2s var(--spring); outline: none; color: var(--text); }
 .input-group input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); }
 
+.card { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 2rem; box-shadow: var(--shadow-sm); border: 1px solid rgba(0,0,0,0.02); }
+
 /* Time Picker Modal */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-modal); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s var(--smooth); }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-modal); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
-/* Bottom sheet style for iOS */
-.modal-content { background: var(--white); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 2rem; width: 100%; max-width: 500px; box-shadow: var(--shadow-lg); transform: translateY(100%); transition: transform 0.4s var(--smooth); padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+.modal-content { background: var(--bg-secondary); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 2rem; width: 100%; max-width: 500px; box-shadow: var(--shadow-lg); transform: translateY(100%); transition: transform 0.4s var(--spring); padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
 @media (min-width: 768px) { .modal-overlay { align-items: center; } .modal-content { border-radius: var(--radius-md); transform: translateY(20px); transform: scale(0.95); } .modal-overlay.active .modal-content { transform: scale(1); } }
 .modal-overlay.active .modal-content { transform: translateY(0); }
 
-.time-picker-tabs { display: flex; background: var(--bg-secondary); border-radius: 8px; padding: 2px; margin-bottom: 1.5rem; }
-.time-picker-tab { flex: 1; text-align: center; padding: 0.4rem; font-size: 0.9rem; font-weight: 600; color: var(--text); cursor: pointer; border-radius: 6px; transition: all 0.2s; }
-.time-picker-tab.active { background: var(--white); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.time-picker-tabs { display: flex; background: var(--bg); border-radius: 8px; padding: 2px; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+.time-picker-tab { flex: 1; text-align: center; padding: 0.5rem; font-size: 0.95rem; font-weight: 500; color: var(--text); cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+.time-picker-tab.active { background: var(--bg-secondary); box-shadow: 0 1px 4px rgba(0,0,0,0.08); font-weight: 600; }
 
-/* Visual Clock - iOS Style */
-.clock-container { position: relative; width: 260px; height: 260px; margin: 0 auto; border-radius: 50%; background: var(--bg-secondary); border: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05); }
-.clock-center { position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; background: var(--blue); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-.clock-hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: var(--radius-pill); z-index: 5; transition: transform 0.1s linear; }
-.clock-hand.hour { width: 6px; height: 75px; background: var(--text); margin-left: -3px; }
-.clock-hand.minute { width: 4px; height: 105px; background: var(--orange); margin-left: -2px; }
+/* Visual Clock - Clean iOS Style */
+.clock-container { position: relative; width: 260px; height: 260px; margin: 0 auto; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+.clock-center { position: absolute; top: 50%; left: 50%; width: 16px; height: 16px; background: var(--text); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+.clock-hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: var(--radius-pill); z-index: 5; transition: transform 0.05s linear; cursor: grab; }
+.clock-hand:active { cursor: grabbing; }
+.clock-hand.hour { width: 8px; height: 75px; background: var(--text); margin-left: -4px; }
+.clock-hand.minute { width: 6px; height: 105px; background: var(--blue); margin-left: -3px; }
+
+/* Hands grab area (invisible fat wrapper to make grabbing easy) */
+.hand-grabber { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 30px; border-radius: 15px; z-index: 6; cursor: grab; }
+.hand-grabber:active { cursor: grabbing; }
+.hour .hand-grabber { height: 85px; }
+.minute .hand-grabber { height: 115px; }
 
 /* Scrollable Wheel Picker - iOS Style */
 .wheel-container { display: flex; justify-content: center; align-items: center; gap: 2rem; height: 200px; position: relative; overflow: hidden; }
-.wheel-container::before, .wheel-container::after { content: ''; position: absolute; left: 0; width: 100%; height: 60px; z-index: 2; pointer-events: none; }
-.wheel-container::before { top: 0; background: linear-gradient(to bottom, white, rgba(255,255,255,0)); }
-.wheel-container::after { bottom: 0; background: linear-gradient(to top, white, rgba(255,255,255,0)); }
+.wheel-container::before, .wheel-container::after { content: ''; position: absolute; left: 0; width: 100%; height: 70px; z-index: 2; pointer-events: none; }
+.wheel-container::before { top: 0; background: linear-gradient(to bottom, var(--bg-secondary), rgba(255,255,255,0)); }
+.wheel-container::after { bottom: 0; background: linear-gradient(to top, var(--bg-secondary), rgba(255,255,255,0)); }
 .wheel-selector { height: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; -ms-overflow-style: none; scrollbar-width: none; padding: 80px 0; font-size: 24px; font-weight: 500; text-align: center; width: 60px; }
 .wheel-selector::-webkit-scrollbar { display: none; }
 .wheel-item { height: 40px; line-height: 40px; scroll-snap-align: center; color: var(--text-secondary); transition: all 0.2s; }

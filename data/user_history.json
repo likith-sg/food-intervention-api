@@ -22,5 +22,13 @@
     "health_score": 6,
     "intervention_level": "soft",
     "timestamp": "2026-04-29T02:03:36.227422+00:00"
+  },
+  {
+    "food": "bread",
+    "time": "07:50",
+    "decision": "good",
+    "health_score": 8,
+    "intervention_level": "none",
+    "timestamp": "2026-04-29T02:20:57.956587+00:00"
   }
 ]

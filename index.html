@@ -7,60 +7,60 @@
   <link rel="stylesheet" href="/css/style.css">
   <style>
     .hero-container {
-      display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 6rem 5%; gap: 2rem;
+      display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 6rem 5%; gap: 4rem; max-width: 1200px; margin: 0 auto;
     }
-    @media (max-width: 768px) {
-      .hero-container { flex-direction: column; text-align: center; padding-top: 8rem; }
+    @media (max-width: 900px) {
+      .hero-container { flex-direction: column; text-align: center; padding-top: 8rem; gap: 2rem; }
+      h1 { font-size: 3rem !important; }
     }
-    .feature-pill {
-      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-      padding: 0.5rem 1rem; border-radius: var(--radius-pill);
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 1rem;
+    
+    .hero-text-content { flex: 1; max-width: 550px; }
+    
+    h1 { font-size: 4.5rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.04em; color: var(--text); margin-bottom: 1.5rem; }
+    .subtitle { font-size: 1.35rem; color: var(--text-secondary); margin-bottom: 2.5rem; line-height: 1.5; font-weight: 400; }
+    
+    .hero-image-wrapper { flex: 1; display: flex; justify-content: center; position: relative; }
+    .hero-image { max-width: 100%; height: auto; border-radius: 32px; box-shadow: var(--shadow-lg); }
+
+    /* Elegant floating card */
+    .floating-card {
+      position: absolute; bottom: 30px; left: -30px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+      padding: 1.25rem 1.5rem; border-radius: 20px; display: flex; align-items: center; gap: 1rem; z-index: 10;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05);
+    }
+    @media (max-width: 900px) {
+      .floating-card { bottom: -20px; left: 50%; transform: translateX(-50%); width: 85%; justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-gradient-mesh"></div>
-  <div class="bg-overlay"></div>
-
-  <nav class="animate-fade-in">
-    <a href="/" class="logo">🥗 Food<span>Guard</span></a>
+  <nav class="stagger-1">
+    <a href="/" class="logo">🥗 FoodGuard</a>
     <div>
-      <a href="/auth" class="btn btn-secondary">Sign In</a>
-      <a href="/auth" class="btn btn-primary" style="margin-left: 0.5rem;">Get Started</a>
+      <a href="/auth" class="btn btn-secondary" style="font-size: 0.95rem; padding: 0.6rem 1.2rem;">Sign In</a>
     </div>
   </nav>
 
   <main class="hero-container">
-    <div style="flex: 1; max-width: 600px;" class="animate-fade-in">
-      <div class="feature-pill">
-        <span style="color: var(--blue);">✨ iOS 18 Design</span>
-        <span>Beautiful & Native Feeling</span>
-      </div>
-      <h1 style="font-size: 4rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.03em;">
-        Master Your Diet with <span style="color: var(--blue);">AI-Powered</span> Coaching.
-      </h1>
-      <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2.5rem; line-height: 1.5;">
-        FoodGuard analyzes what you're about to eat and provides real-time interventions to help you build healthier habits.
+    <div class="hero-text-content">
+      <h1 class="stagger-1">Master your diet.<br><span style="color: var(--blue);">In real time.</span></h1>
+      <p class="subtitle stagger-2">
+        FoodGuard analyzes your meals and provides intelligent, real-time coaching. Build healthier habits without the guesswork.
       </p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <a href="/auth" class="btn btn-primary" style="font-size: 1.1rem; padding: 1.1rem 2.5rem; border-radius: 14px;">Start Free Analysis</a>
+      <div class="stagger-3" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/auth" class="btn btn-primary" style="font-size: 1.15rem; padding: 1.25rem 2.5rem;">Start Free Analysis</a>
       </div>
     </div>
     
-    <div style="flex: 1; display: flex; justify-content: center; position: relative;" class="animate-float">
-      <!-- Decorative UI Card floating above hero image -->
-      <div class="glass-card" style="position: absolute; bottom: 10%; left: -10%; padding: 1rem; display: flex; align-items: center; gap: 1rem; z-index: 10;">
-        <div style="width: 40px; height: 40px; background: #e5f9e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🥑</div>
-        <div>
-          <div style="font-weight: 700; font-size: 0.9rem;">Perfect Choice</div>
-          <div style="color: var(--text-secondary); font-size: 0.8rem;">9.5/10 Health Score</div>
+    <div class="hero-image-wrapper stagger-4">
+      <img src="/assets/hero.png" alt="Healthy Food" class="hero-image">
+      <div class="floating-card">
+        <div style="width: 44px; height: 44px; background: #E5F9E0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">🥑</div>
+        <div style="text-align: left;">
+          <div style="font-weight: 700; font-size: 1rem; color: var(--text);">Perfect Choice</div>
+          <div style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;">9.5/10 Health Score</div>
         </div>
       </div>
-      
-      <img src="/assets/hero.png" alt="Healthy Food" style="max-width: 100%; height: auto; border-radius: 30px; box-shadow: var(--shadow-lg);">
     </div>
   </main>
 </body>
