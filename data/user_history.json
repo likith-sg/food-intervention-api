@@ -30,5 +30,21 @@
     "health_score": 8,
     "intervention_level": "none",
     "timestamp": "2026-04-29T02:20:57.956587+00:00"
+  },
+  {
+    "food": "bread",
+    "time": "07:57",
+    "decision": "good",
+    "health_score": 8,
+    "intervention_level": "none",
+    "timestamp": "2026-04-29T02:27:43.268177+00:00"
+  },
+  {
+    "food": "guntur chicken fry",
+    "time": "07:57",
+    "decision": "good",
+    "health_score": 10,
+    "intervention_level": "none",
+    "timestamp": "2026-04-29T02:28:14.832129+00:00"
   }
 ]

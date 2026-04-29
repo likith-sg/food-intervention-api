@@ -285,7 +285,8 @@
       const tStr = `${hStr}:${mStr}`;
       clockDisplay.textContent = tStr; wheelDisplay.textContent = tStr;
       
-      const hourAngle = (selectedHour % 12) * 30 + (selectedMinute / 2);
+      // Fully visually decoupled: hour hand only snaps to the exact hour
+      const hourAngle = (selectedHour % 12) * 30;
       const minuteAngle = selectedMinute * 6;
       hourHand.style.transform = `rotate(${hourAngle}deg)`;
       minuteHand.style.transform = `rotate(${minuteAngle}deg)`;
@@ -315,14 +316,14 @@
     let activeHand = null;
 
     // Attach listeners directly to the hands
-    hourHand.addEventListener('mousedown', (e) => { e.stopPropagation(); activeHand = 'hour'; });
-    hourHand.addEventListener('touchstart', (e) => { e.stopPropagation(); activeHand = 'hour'; }, {passive: false});
+    hourHand.addEventListener('mousedown', (e) => { e.stopPropagation(); activeHand = 'hour'; hourHand.classList.add('dragging'); });
+    hourHand.addEventListener('touchstart', (e) => { e.stopPropagation(); activeHand = 'hour'; hourHand.classList.add('dragging'); }, {passive: false});
     
-    minuteHand.addEventListener('mousedown', (e) => { e.stopPropagation(); activeHand = 'minute'; });
-    minuteHand.addEventListener('touchstart', (e) => { e.stopPropagation(); activeHand = 'minute'; }, {passive: false});
+    minuteHand.addEventListener('mousedown', (e) => { e.stopPropagation(); activeHand = 'minute'; minuteHand.classList.add('dragging'); });
+    minuteHand.addEventListener('touchstart', (e) => { e.stopPropagation(); activeHand = 'minute'; minuteHand.classList.add('dragging'); }, {passive: false});
 
-    window.addEventListener('mouseup', () => { activeHand = null; });
-    window.addEventListener('touchend', () => { activeHand = null; });
+    window.addEventListener('mouseup', () => { activeHand = null; hourHand.classList.remove('dragging'); minuteHand.classList.remove('dragging'); });
+    window.addEventListener('touchend', () => { activeHand = null; hourHand.classList.remove('dragging'); minuteHand.classList.remove('dragging'); });
 
     window.addEventListener('mousemove', handleDrag);
     window.addEventListener('touchmove', handleDrag, {passive: false});
