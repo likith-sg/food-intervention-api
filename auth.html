@@ -2,24 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FoodGuard - Authentication</title>
   <link rel="stylesheet" href="/css/style.css">
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // TODO: Replace with your actual Firebase config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    // Initialize Firebase only if API Key is set to avoid errors during UI test
+    const firebaseConfig = { apiKey: "YOUR_API_KEY", authDomain: "YOUR_PROJECT_ID.firebaseapp.com" };
     let auth = null;
     if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
       const app = initializeApp(firebaseConfig);
@@ -29,33 +19,28 @@
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("auth-form");
       const title = document.getElementById("auth-title");
+      const subtitle = document.getElementById("auth-subtitle");
       const submitBtn = document.getElementById("submit-btn");
       const toggleLink = document.getElementById("toggle-mode");
       const errorMsg = document.getElementById("error-msg");
-      
       let isSignUp = false;
 
       toggleLink.addEventListener("click", (e) => {
         e.preventDefault();
         isSignUp = !isSignUp;
         title.textContent = isSignUp ? "Create Account" : "Welcome Back";
+        subtitle.textContent = isSignUp ? "Sign up to start your journey." : "Enter your details to proceed.";
         submitBtn.textContent = isSignUp ? "Sign Up" : "Sign In";
-        toggleLink.innerHTML = isSignUp 
-          ? 'Already have an account? <span style="color: var(--blue);">Sign In</span>' 
-          : 'Need an account? <span style="color: var(--blue);">Sign Up</span>';
+        toggleLink.innerHTML = isSignUp ? 'Already have an account? <span style="color: var(--blue);">Sign In</span>' : 'Need an account? <span style="color: var(--blue);">Sign Up</span>';
       });
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Processing...";
-        errorMsg.style.display = "none";
+        submitBtn.disabled = true; submitBtn.textContent = "Processing..."; errorMsg.style.display = "none";
         
         if (!auth) {
-          // Mock auth fallback if Firebase config is not set
           setTimeout(() => {
             localStorage.setItem("fg_token", "dummy_firebase_token_123");
             window.location.href = "/app";
@@ -65,34 +50,30 @@
 
         try {
           let userCredential;
-          if (isSignUp) {
-            userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          } else {
-            userCredential = await signInWithEmailAndPassword(auth, email, password);
-          }
-          const token = await userCredential.user.getIdToken();
-          localStorage.setItem("fg_token", token);
+          if (isSignUp) { userCredential = await createUserWithEmailAndPassword(auth, email, password); } 
+          else { userCredential = await signInWithEmailAndPassword(auth, email, password); }
+          localStorage.setItem("fg_token", await userCredential.user.getIdToken());
           window.location.href = "/app";
         } catch (error) {
-          console.error(error);
-          errorMsg.textContent = error.message;
-          errorMsg.style.display = "block";
-          submitBtn.disabled = false;
-          submitBtn.textContent = isSignUp ? "Sign Up" : "Sign In";
+          errorMsg.textContent = error.message; errorMsg.style.display = "block";
+          submitBtn.disabled = false; submitBtn.textContent = isSignUp ? "Sign Up" : "Sign In";
         }
       });
     });
   </script>
 </head>
-<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+  <div class="bg-gradient-mesh"></div>
+  <div class="bg-overlay"></div>
+
   <nav>
     <a href="/" class="logo">🥗 Food<span>Guard</span></a>
   </nav>
 
-  <div class="glass-card animate-fade-in" style="width: 100%; max-width: 400px; padding: 2.5rem;">
+  <div class="glass-card animate-fade-in" style="width: 100%; max-width: 420px; padding: 3rem 2.5rem; margin: 1rem;">
     <div class="text-center mb-8">
-      <h2 id="auth-title" style="font-size: 2rem; font-weight: 700; color: var(--text);">Welcome Back</h2>
-      <p style="color: var(--text-secondary); margin-top: 0.5rem;">Enter your details to proceed.</p>
+      <h2 id="auth-title" style="font-size: 2.2rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em;">Welcome Back</h2>
+      <p id="auth-subtitle" style="color: var(--text-secondary); margin-top: 0.5rem; font-size: 1.05rem;">Enter your details to proceed.</p>
     </div>
 
     <div id="error-msg" style="color: var(--red); font-size: 0.875rem; text-align: center; margin-bottom: 1rem; display: none;"></div>
@@ -107,7 +88,7 @@
         <input type="password" id="password" required placeholder="••••••••">
       </div>
       
-      <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: 1rem;">Sign In</button>
+      <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: 1.1rem; border-radius: 12px; font-size: 1.1rem;">Sign In</button>
     </form>
 
     <div class="text-center mt-8">

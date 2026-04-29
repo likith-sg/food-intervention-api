@@ -2,11 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FoodGuard - Smart Food Intervention</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .hero-container {
+      display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 6rem 5%; gap: 2rem;
+    }
+    @media (max-width: 768px) {
+      .hero-container { flex-direction: column; text-align: center; padding-top: 8rem; }
+    }
+    .feature-pill {
+      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+      padding: 0.5rem 1rem; border-radius: var(--radius-pill);
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 1rem;
+    }
+  </style>
 </head>
 <body>
+  <div class="bg-gradient-mesh"></div>
+  <div class="bg-overlay"></div>
+
   <nav class="animate-fade-in">
     <a href="/" class="logo">🥗 Food<span>Guard</span></a>
     <div>
@@ -15,38 +33,34 @@
     </div>
   </nav>
 
-  <main style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 5rem 5%;">
+  <main class="hero-container">
     <div style="flex: 1; max-width: 600px;" class="animate-fade-in">
-      <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; color: var(--text);">
-        Master Your Diet with <span style="color: var(--blue);">AI-Powered</span> Intervention
-      </h1>
-      <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
-        FoodGuard analyzes what you're about to eat and provides real-time coaching to help you build healthier habits. Stop mindless eating before it starts.
-      </p>
-      <div style="display: flex; gap: 1rem;">
-        <a href="/auth" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">Start Free Analysis</a>
+      <div class="feature-pill">
+        <span style="color: var(--blue);">✨ iOS 18 Design</span>
+        <span>Beautiful & Native Feeling</span>
       </div>
-      <div style="margin-top: 2rem; display: flex; gap: 1.5rem; align-items: center;">
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <div style="width: 12px; height: 12px; background: var(--green); border-radius: 50%;"></div>
-          <span style="font-weight: 600; color: var(--text-secondary);">Real-time</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <div style="width: 12px; height: 12px; background: var(--orange); border-radius: 50%;"></div>
-          <span style="font-weight: 600; color: var(--text-secondary);">AI Coaching</span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <div style="width: 12px; height: 12px; background: var(--yellow); border-radius: 50%;"></div>
-          <span style="font-weight: 600; color: var(--text-secondary);">Pattern Detection</span>
-        </div>
+      <h1 style="font-size: 4rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -0.03em;">
+        Master Your Diet with <span style="color: var(--blue);">AI-Powered</span> Coaching.
+      </h1>
+      <p style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2.5rem; line-height: 1.5;">
+        FoodGuard analyzes what you're about to eat and provides real-time interventions to help you build healthier habits.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/auth" class="btn btn-primary" style="font-size: 1.1rem; padding: 1.1rem 2.5rem; border-radius: 14px;">Start Free Analysis</a>
       </div>
     </div>
+    
     <div style="flex: 1; display: flex; justify-content: center; position: relative;" class="animate-float">
-      <!-- Decorative blobs -->
-      <div style="position: absolute; width: 400px; height: 400px; background: rgba(59, 130, 246, 0.2); filter: blur(60px); border-radius: 50%; top: -50px; left: -50px; z-index: -1;"></div>
-      <div style="position: absolute; width: 300px; height: 300px; background: rgba(249, 115, 22, 0.2); filter: blur(60px); border-radius: 50%; bottom: -50px; right: 50px; z-index: -1;"></div>
+      <!-- Decorative UI Card floating above hero image -->
+      <div class="glass-card" style="position: absolute; bottom: 10%; left: -10%; padding: 1rem; display: flex; align-items: center; gap: 1rem; z-index: 10;">
+        <div style="width: 40px; height: 40px; background: #e5f9e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🥑</div>
+        <div>
+          <div style="font-weight: 700; font-size: 0.9rem;">Perfect Choice</div>
+          <div style="color: var(--text-secondary); font-size: 0.8rem;">9.5/10 Health Score</div>
+        </div>
+      </div>
       
-      <img src="/assets/hero.png" alt="Healthy Food" style="max-width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+      <img src="/assets/hero.png" alt="Healthy Food" style="max-width: 100%; height: auto; border-radius: 30px; box-shadow: var(--shadow-lg);">
     </div>
   </main>
 </body>
