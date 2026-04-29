@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-modal: rgba(0, 0, 0, 0.4);
+  --text: #1e293b;
+  --text-secondary: #475569;
+  --border: #e2e8f0;
+  
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --green: #10b981;
+  --orange: #f97316;
+  --yellow: #eab308;
+  --white: #ffffff;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 9999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+.animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+
+/* Components */
+.btn { padding: 0.75rem 1.5rem; border-radius: var(--radius-pill); font-weight: 600; font-size: 1rem; cursor: pointer; border: none; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
+.btn-primary { background: var(--blue); color: var(--white); box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39); }
+.btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); }
+.btn-secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--border); transform: translateY(-2px); }
+
+.glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: var(--shadow-lg); border-radius: var(--radius-lg); }
+
+nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; position: absolute; top: 0; left: 0; right: 0; z-index: 100; }
+.logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--text); text-decoration: none; }
+.logo span { color: var(--green); }
+
+.input-group { margin-bottom: 1.25rem; }
+.input-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+.input-group input { width: 100%; padding: 0.875rem 1rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg-secondary); font-size: 1rem; transition: all 0.2s ease; outline: none; color: var(--text); }
+.input-group input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); background: var(--bg); }
+
+/* Time Picker Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-modal); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-content { background: var(--bg); border-radius: var(--radius-md); padding: 2rem; width: 340px; box-shadow: var(--shadow-lg); transform: translateY(20px); transition: transform 0.3s ease; }
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.time-picker-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+.time-picker-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.time-picker-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+/* Visual Clock */
+.clock-container { position: relative; width: 240px; height: 240px; margin: 0 auto; border-radius: 50%; background: var(--bg-secondary); border: 1px solid var(--border); }
+.clock-center { position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background: var(--blue); border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; }
+.clock-hand { position: absolute; bottom: 50%; left: 50%; transform-origin: bottom center; border-radius: var(--radius-pill); z-index: 5; transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
+.clock-hand.hour { width: 6px; height: 70px; background: var(--text); margin-left: -3px; }
+.clock-hand.minute { width: 4px; height: 100px; background: var(--blue); margin-left: -2px; }
+.clock-number { position: absolute; width: 30px; height: 30px; text-align: center; line-height: 30px; font-weight: 600; color: var(--text-secondary); transform: translate(-50%, -50%); cursor: pointer; border-radius: 50%; transition: background 0.2s, color 0.2s; }
+.clock-number:hover { background: #eff6ff; color: var(--blue); }
+.clock-number.active { background: var(--blue); color: var(--white); }
+
+/* Grid Picker */
+.grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+.grid-item { text-align: center; padding: 0.75rem; background: var(--bg-secondary); border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; color: var(--text-secondary); transition: all 0.2s; }
+.grid-item:hover { background: #eff6ff; color: var(--blue); transform: translateY(-2px); }
+.grid-item.active { background: var(--blue); color: var(--white); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+
+/* Utilities */
+.text-center { text-align: center; } .mt-4 { margin-top: 1rem; } .mt-8 { margin-top: 2rem; } .mb-4 { margin-bottom: 1rem; } .mb-8 { margin-bottom: 2rem; } .hidden { display: none !important; }

@@ -9,3 +9,6 @@ venv/
 dist/
 build/
 .DS_Store
+
+gcloud.zip
+google-cloud-sdk/

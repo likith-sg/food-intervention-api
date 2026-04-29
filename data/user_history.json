@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "food": "bread",
+    "time": "07:20",
+    "decision": "good",
+    "health_score": 8,
+    "intervention_level": "none",
+    "timestamp": "2026-04-29T01:51:01.886088+00:00"
+  }
+]

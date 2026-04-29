@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodGuard - Main App</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body { background: var(--bg-secondary); }
+    
+    .dashboard-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 2rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+    }
+
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    
+    .live-clock { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 0.5rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.875rem; color: var(--text-secondary); box-shadow: var(--shadow-sm); }
+    
+    .badge { font-family: 'DM Mono', monospace; font-size: 0.75rem; border-radius: var(--radius-pill); padding: 0.25rem 0.75rem; display: inline-flex; border: 1px solid transparent; margin-bottom: 1.5rem; }
+    .badge-ai { background: #dcfce7; color: var(--green); border-color: #86efac; }
+    .badge-fallback { background: #eff6ff; color: var(--blue); border-color: #bfdbfe; }
+
+    .card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+    .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
+    
+    .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* Results */
+    .result-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1rem; opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .section-label { font-family: 'DM Mono', monospace; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.75rem; }
+    .score-large { font-family: 'DM Mono', monospace; font-size: 3.5rem; font-weight: 500; line-height: 1; }
+    .score-out-of { font-size: 1.25rem; color: var(--text-secondary); }
+    .score-bar-bg { height: 10px; border-radius: 5px; background: var(--border); margin-top: 1rem; width: 100%; }
+    .score-bar-fill { height: 100%; width: 0; border-radius: 5px; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
+    .verdict-badge { font-weight: 700; font-size: 1.125rem; padding: 0.75rem 1.5rem; border-radius: var(--radius-pill); text-transform: uppercase; display: inline-block; }
+    .intervention-pill { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-secondary); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 0.25rem 0.75rem; margin-top: 0.5rem; display: inline-block; }
+    .coach-text { font-size: 1.125rem; line-height: 1.6; color: var(--text); font-style: italic; }
+    .reason-row { display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+    .reason-row:last-child { border-bottom: none; }
+    .reason-dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .reason-text { font-size: 0.95rem; line-height: 1.5; color: var(--text-secondary); }
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .risk-subcard { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; }
+    .alt-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .alt-pill { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-pill); padding: 0.5rem 1rem; font-size: 0.875rem; color: #1d4ed8; font-family: 'DM Mono', monospace; transition: all 0.2s; }
+    .alt-pill:hover { background: #dbeafe; transform: translateY(-2px); }
+    .error-inline { color: var(--red); font-size: 0.8rem; margin-top: 0.25rem; display: none; }
+
+    /* Custom Time Input */
+    .time-display { width: 100%; padding: 0.875rem 1rem; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg-secondary); font-size: 1.125rem; font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text); cursor: pointer; text-align: center; transition: all 0.2s; }
+    .time-display:hover { border-color: var(--blue); background: var(--bg); }
+    
+    /* Food of the Day Card */
+    .food-of-day { position: relative; color: white; padding: 2rem; border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; min-height: 250px; box-shadow: var(--shadow-md); margin-bottom: 1.5rem; }
+    .food-of-day img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .food-of-day .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2)); z-index: 1; }
+    .food-of-day .content { position: relative; z-index: 2; }
+    .fod-badge { background: var(--orange); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-pill); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.5rem; }
+    .fod-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .fod-details { font-family: 'DM Mono', monospace; font-size: 0.875rem; color: #e2e8f0; }
+
+    /* Skeleton Loader */
+    .skeleton-box { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-md); margin-bottom: 1rem; }
+    @keyframes shimmer { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo">🥗 Food<span>Guard</span></a>
+    <div>
+      <button onclick="logout()" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Log Out</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-layout animate-fade-in">
+    <!-- LEFT COLUMN: INPUT -->
+    <div>
+      <header>
+        <div>
+          <h1 style="font-size: 2rem; font-weight: 800;">Analysis</h1>
+          <p style="color: var(--text-secondary); font-family: 'DM Mono', monospace; font-size: 0.875rem;">Real-time Engine</p>
+        </div>
+        <div class="live-clock" id="live-clock">--:--:--</div>
+      </header>
+
+      <div id="ai-status-badge" class="badge">...</div>
+
+      <div class="card">
+        <div class="card-title">What's on the menu?</div>
+        
+        <div class="input-group">
+          <label for="food">Food Item</label>
+          <input type="text" id="food" placeholder="e.g. avocado toast, pepperoni pizza" />
+          <div class="error-inline" id="err-food">Please enter a food item.</div>
+        </div>
+        
+        <div class="input-row">
+          <div class="input-group">
+            <label>Time</label>
+            <div id="time-display" class="time-display" onclick="openTimePicker()">12:00</div>
+            <input type="hidden" id="time" value="12:00" />
+          </div>
+          <div class="input-group">
+            <label for="mood">Mood (Optional)</label>
+            <input type="text" id="mood" placeholder="e.g. stressed, happy" />
+          </div>
+        </div>
+        
+        <button class="btn btn-primary" id="analyze-btn" style="width: 100%; margin-top: 1rem; padding: 1rem;">Analyze Food</button>
+      </div>
+
+      <!-- Food of the Day Card -->
+      <div class="food-of-day">
+        <img src="/assets/food_of_day.png" alt="Avocado Toast">
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="fod-badge">Food of the Day</div>
+          <div class="fod-title">Avocado Toast with Poached Egg</div>
+          <div class="fod-details">
+            🕒 Ideal Time: 09:00 AM <br>
+            ⚖️ Portion: 1 slice, 1/2 avocado, 1 egg
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: RESULTS -->
+    <div>
+      <div id="result-area">
+        <!-- Results or placeholder empty state -->
+        <div style="text-align: center; color: var(--text-secondary); padding: 4rem 0; font-family: 'DM Mono', monospace;">
+          <div style="font-size: 3rem; margin-bottom: 1rem;">🍽️</div>
+          Awaiting your input...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Picker Modal -->
+  <div class="modal-overlay" id="time-picker-modal">
+    <div class="modal-content">
+      <div class="time-picker-tabs">
+        <div class="time-picker-tab active" id="tab-clock" onclick="switchTab('clock')">Visual Clock</div>
+        <div class="time-picker-tab" id="tab-grid" onclick="switchTab('grid')">Grid Selector</div>
+      </div>
+
+      <div id="view-clock">
+        <div style="text-align: center; margin-bottom: 1.5rem; font-family: 'DM Mono', monospace; font-size: 2rem; font-weight: 500;" id="clock-display">12:00</div>
+        <div class="clock-container" id="clock-container">
+          <div class="clock-center"></div>
+          <div class="clock-hand hour" id="hour-hand"></div>
+          <div class="clock-hand minute" id="minute-hand"></div>
+        </div>
+        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">Click on the clock face to set the time.</p>
+      </div>
+
+      <div id="view-grid" class="hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-weight: 600;" id="grid-step-title">Select Hour</span>
+          <span style="font-family: 'DM Mono', monospace; color: var(--blue);" id="grid-display">12:00</span>
+        </div>
+        <div class="grid-container" id="grid-hours"></div>
+        <div class="grid-container hidden" id="grid-minutes"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+        <button class="btn btn-secondary" onclick="closeTimePicker()">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmTimePicker()">Set Time</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ----------------------------------------------------
+    // AUTH & APP LOGIC
+    // ----------------------------------------------------
+    if (!localStorage.getItem("fg_token")) {
+      window.location.href = "/auth";
+    }
+
+    function logout() {
+      localStorage.removeItem("fg_token");
+      window.location.href = "/";
+    }
+
+    const API_BASE = window.location.origin;
+    let healthData = { firebase: false, ai_powered: false };
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Set default time to current time
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const curTime = `${h}:${m}`;
+      document.getElementById("time-display").textContent = curTime;
+      document.getElementById("time").value = curTime;
+      selectedHour = now.getHours();
+      selectedMinute = now.getMinutes();
+      
+      setInterval(() => {
+        const d = new Date();
+        document.getElementById("live-clock").textContent = d.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }, 1000);
+
+      try {
+        const res = await fetch(API_BASE + "/health");
+        if(res.ok) healthData = await res.json();
+      } catch(e) {}
+      
+      const badge = document.getElementById("ai-status-badge");
+      if(healthData.ai_powered) {
+        badge.className = "badge badge-ai";
+        badge.textContent = "✦ AI Analysis Active";
+      } else {
+        badge.className = "badge badge-fallback";
+        badge.textContent = "◎ Smart Fallback Mode";
+      }
+    });
+
+    document.getElementById("analyze-btn").addEventListener("click", analyze);
+
+    async function analyze() {
+      const food = document.getElementById("food").value.trim();
+      const time = document.getElementById("time").value.trim();
+      const mood = document.getElementById("mood").value.trim();
+      
+      const errFood = document.getElementById("err-food");
+      errFood.style.display = "none";
+      
+      if(!food) { errFood.style.display = "block"; return; }
+      
+      const btn = document.getElementById("analyze-btn");
+      btn.disabled = true;
+      btn.textContent = "Analyzing...";
+      
+      const resultArea = document.getElementById("result-area");
+      resultArea.innerHTML = `
+        <div class="skeleton-box" style="height: 120px;"></div>
+        <div class="skeleton-box" style="height: 100px;"></div>
+        <div class="skeleton-box" style="height: 150px;"></div>
+      `;
+      
+      const body = { food, time };
+      if(mood) body.mood = mood;
+      
+      try {
+        const res = await fetch(API_BASE + "/analyze", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify(body)
+        });
+        
+        if(!res.ok) {
+          const errJson = await res.json().catch(()=>({}));
+          showError(errJson.detail || errJson.error || "Server Error");
+        } else {
+          const data = await res.json();
+          renderResults(data);
+        }
+      } catch(e) {
+        showError("Could not connect to server.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Analyze Food";
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById("result-area").innerHTML = `
+        <div class="card" style="border-color: var(--red); background: #fef2f2;">
+          <h3 style="color: var(--red); margin-bottom: 0.5rem;">Analysis Failed</h3>
+          <p style="color: var(--text-secondary);">${msg}</p>
+        </div>
+      `;
+    }
+
+    function renderResults(data) {
+      const area = document.getElementById("result-area");
+      area.innerHTML = "";
+      
+      const {health_score, decision, intervention_level, intervention_message, reasoning, pattern_detected, future_risk, better_alternatives} = data;
+      
+      let colorVar = "var(--green)";
+      let bgVar = "#dcfce7";
+      
+      if(health_score < 5 || decision === "bad") {
+        colorVar = "var(--red)";
+        bgVar = "#fee2e2";
+      } else if(health_score < 8 || decision === "moderate") {
+        colorVar = "var(--orange)";
+        bgVar = "#ffedd5";
+      }
+
+      const scoreCard = `
+        <div class="result-card" style="animation-delay: 0ms; display: flex; justify-content: space-between; align-items: center;">
+          <div style="flex: 1;">
+            <div class="score-large" style="color: ${colorVar};">${health_score}<span class="score-out-of">/10</span></div>
+            <div class="section-label">HEALTH SCORE</div>
+            <div class="score-bar-bg"><div class="score-bar-fill" id="anim-score" style="background:${colorVar};"></div></div>
+          </div>
+          <div style="text-align: right; padding-left: 2rem;">
+            <div class="verdict-badge" style="background:${bgVar}; color:${colorVar}; border: 2px solid ${colorVar};">${decision}</div>
+            <br>
+            <div class="intervention-pill">${intervention_level} intervention</div>
+          </div>
+        </div>
+      `;
+      
+      const coachCard = `
+        <div class="result-card" style="animation-delay: 100ms; border-left: 4px solid ${colorVar};">
+          <div class="section-label">AI COACH</div>
+          <div class="coach-text">"${intervention_message}"</div>
+        </div>
+      `;
+      
+      const reasonHtml = reasoning.map(r => `
+        <div class="reason-row">
+          <div class="reason-dot" style="background:${colorVar};"></div>
+          <div class="reason-text">${r}</div>
+        </div>
+      `).join("");
+      const reasonCard = `
+        <div class="result-card" style="animation-delay: 200ms;">
+          <div class="section-label">DETAILED ANALYSIS</div>
+          ${reasonHtml}
+        </div>
+      `;
+      
+      const riskCard = `
+        <div class="risk-grid" style="animation-delay: 300ms; animation: fadeUp 0.5s ease forwards; opacity: 0; transform: translateY(20px);">
+          <div class="risk-subcard">
+            <div class="section-label">PATTERN DETECTED</div>
+            <div style="font-weight: 600; color: var(--text);">${pattern_detected ? pattern_detected.replace(/_/g, ' ') : 'None detected'}</div>
+          </div>
+          <div class="risk-subcard">
+            <div class="section-label">FUTURE RISK</div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">${future_risk}</div>
+          </div>
+        </div>
+      `;
+      
+      const altHtml = better_alternatives.map(a => `<div class="alt-pill">${a}</div>`).join("");
+      const altCard = `
+        <div class="result-card" style="animation-delay: 400ms; margin-top: 1rem;">
+          <div class="section-label">BETTER ALTERNATIVES</div>
+          <div class="alt-wrap">${altHtml}</div>
+        </div>
+      `;
+      
+      area.innerHTML = scoreCard + coachCard + reasonCard + riskCard + altCard;
+      
+      setTimeout(() => {
+        const sBar = document.getElementById("anim-score");
+        if(sBar) sBar.style.width = (health_score * 10) + "%";
+      }, 50);
+    }
+
+    // ----------------------------------------------------
+    // TIME PICKER LOGIC
+    // ----------------------------------------------------
+    let selectedHour = 12;
+    let selectedMinute = 0;
+    let currentView = 'clock'; // 'clock' or 'grid'
+    let gridStep = 'hours'; // 'hours' or 'minutes'
+
+    const modal = document.getElementById('time-picker-modal');
+    const clockDisplay = document.getElementById('clock-display');
+    const gridDisplay = document.getElementById('grid-display');
+    const hourHand = document.getElementById('hour-hand');
+    const minuteHand = document.getElementById('minute-hand');
+    const clockContainer = document.getElementById('clock-container');
+
+    function updateDisplays() {
+      const hStr = String(selectedHour).padStart(2, '0');
+      const mStr = String(selectedMinute).padStart(2, '0');
+      const timeStr = `${hStr}:${mStr}`;
+      clockDisplay.textContent = timeStr;
+      gridDisplay.textContent = timeStr;
+      
+      // Update hands
+      const hourAngle = (selectedHour % 12) * 30 + (selectedMinute / 2);
+      const minuteAngle = selectedMinute * 6;
+      hourHand.style.transform = `rotate(${hourAngle}deg)`;
+      minuteHand.style.transform = `rotate(${minuteAngle}deg)`;
+    }
+
+    function openTimePicker() {
+      updateDisplays();
+      buildGrid();
+      modal.classList.add('active');
+    }
+
+    function closeTimePicker() {
+      modal.classList.remove('active');
+    }
+
+    function confirmTimePicker() {
+      const hStr = String(selectedHour).padStart(2, '0');
+      const mStr = String(selectedMinute).padStart(2, '0');
+      const timeStr = `${hStr}:${mStr}`;
+      document.getElementById('time-display').textContent = timeStr;
+      document.getElementById('time').value = timeStr;
+      closeTimePicker();
+    }
+
+    function switchTab(tab) {
+      currentView = tab;
+      document.getElementById('tab-clock').classList.toggle('active', tab === 'clock');
+      document.getElementById('tab-grid').classList.toggle('active', tab === 'grid');
+      document.getElementById('view-clock').classList.toggle('hidden', tab !== 'clock');
+      document.getElementById('view-grid').classList.toggle('hidden', tab !== 'grid');
+      if (tab === 'grid') {
+        gridStep = 'hours';
+        document.getElementById('grid-hours').classList.remove('hidden');
+        document.getElementById('grid-minutes').classList.add('hidden');
+        document.getElementById('grid-step-title').textContent = "Select Hour";
+        buildGrid();
+      }
+    }
+
+    // Visual Clock Interaction
+    let isDragging = false;
+    clockContainer.addEventListener('mousedown', (e) => { isDragging = true; updateClockFromEvent(e); });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    window.addEventListener('mousemove', (e) => { if (isDragging) updateClockFromEvent(e); });
+
+    function updateClockFromEvent(e) {
+      const rect = clockContainer.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const x = e.clientX - centerX;
+      const y = centerY - e.clientY; // Flip y for standard cartesian
+      
+      let angle = Math.atan2(x, y) * (180 / Math.PI);
+      if (angle < 0) angle += 360;
+
+      // Simplistic assumption: if dragging close to center, hour hand; if outer, minute hand
+      const distance = Math.sqrt(x*x + y*y);
+      if (distance < rect.width * 0.35) {
+        // Hour hand (30 degrees per hour)
+        selectedHour = Math.round(angle / 30);
+        if(selectedHour >= 12) selectedHour -= 12; 
+        // Note: Can't easily do 24hr format on 12hr dial without am/pm toggle, so we keep 12-23 state if it was there
+        if(document.getElementById('time-display').textContent.substring(0,2) >= 12) {
+            selectedHour += 12;
+            if(selectedHour == 24) selectedHour = 12;
+        }
+      } else {
+        // Minute hand (6 degrees per minute)
+        selectedMinute = Math.round(angle / 6);
+        if (selectedMinute === 60) selectedMinute = 0;
+      }
+      updateDisplays();
+    }
+
+    // Grid Selector Logic
+    function buildGrid() {
+      const hoursContainer = document.getElementById('grid-hours');
+      const minsContainer = document.getElementById('grid-minutes');
+      
+      if (gridStep === 'hours') {
+        hoursContainer.innerHTML = '';
+        for (let i = 0; i < 24; i++) {
+          const div = document.createElement('div');
+          div.className = `grid-item ${selectedHour === i ? 'active' : ''}`;
+          div.textContent = String(i).padStart(2, '0');
+          div.onclick = () => {
+            selectedHour = i;
+            gridStep = 'minutes';
+            document.getElementById('grid-step-title').textContent = "Select Minute";
+            document.getElementById('grid-hours').classList.add('hidden');
+            document.getElementById('grid-minutes').classList.remove('hidden');
+            updateDisplays();
+            buildGrid();
+          };
+          hoursContainer.appendChild(div);
+        }
+      } else {
+        minsContainer.innerHTML = '';
+        // Show steps of 5 for minutes in the grid to save space, but allow clicking
+        for (let i = 0; i < 60; i += 5) {
+          const div = document.createElement('div');
+          div.className = `grid-item ${Math.abs(selectedMinute - i) < 5 ? 'active' : ''}`;
+          div.textContent = String(i).padStart(2, '0');
+          div.onclick = () => {
+            selectedMinute = i;
+            updateDisplays();
+            buildGrid();
+            // Automatically close if minute is picked
+            setTimeout(confirmTimePicker, 200);
+          };
+          minsContainer.appendChild(div);
+        }
+      }
+    }
+
+  </script>
+</body>
+</html>

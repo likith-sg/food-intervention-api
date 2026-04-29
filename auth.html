@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodGuard - Authentication</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // TODO: Replace with your actual Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase only if API Key is set to avoid errors during UI test
+    let auth = null;
+    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+      const app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("auth-form");
+      const title = document.getElementById("auth-title");
+      const submitBtn = document.getElementById("submit-btn");
+      const toggleLink = document.getElementById("toggle-mode");
+      const errorMsg = document.getElementById("error-msg");
+      
+      let isSignUp = false;
+
+      toggleLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        isSignUp = !isSignUp;
+        title.textContent = isSignUp ? "Create Account" : "Welcome Back";
+        submitBtn.textContent = isSignUp ? "Sign Up" : "Sign In";
+        toggleLink.innerHTML = isSignUp 
+          ? 'Already have an account? <span style="color: var(--blue);">Sign In</span>' 
+          : 'Need an account? <span style="color: var(--blue);">Sign Up</span>';
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Processing...";
+        errorMsg.style.display = "none";
+        
+        if (!auth) {
+          // Mock auth fallback if Firebase config is not set
+          setTimeout(() => {
+            localStorage.setItem("fg_token", "dummy_firebase_token_123");
+            window.location.href = "/app";
+          }, 800);
+          return;
+        }
+
+        try {
+          let userCredential;
+          if (isSignUp) {
+            userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          } else {
+            userCredential = await signInWithEmailAndPassword(auth, email, password);
+          }
+          const token = await userCredential.user.getIdToken();
+          localStorage.setItem("fg_token", token);
+          window.location.href = "/app";
+        } catch (error) {
+          console.error(error);
+          errorMsg.textContent = error.message;
+          errorMsg.style.display = "block";
+          submitBtn.disabled = false;
+          submitBtn.textContent = isSignUp ? "Sign Up" : "Sign In";
+        }
+      });
+    });
+  </script>
+</head>
+<body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+  <nav>
+    <a href="/" class="logo">🥗 Food<span>Guard</span></a>
+  </nav>
+
+  <div class="glass-card animate-fade-in" style="width: 100%; max-width: 400px; padding: 2.5rem;">
+    <div class="text-center mb-8">
+      <h2 id="auth-title" style="font-size: 2rem; font-weight: 700; color: var(--text);">Welcome Back</h2>
+      <p style="color: var(--text-secondary); margin-top: 0.5rem;">Enter your details to proceed.</p>
+    </div>
+
+    <div id="error-msg" style="color: var(--red); font-size: 0.875rem; text-align: center; margin-bottom: 1rem; display: none;"></div>
+
+    <form id="auth-form">
+      <div class="input-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required placeholder="you@example.com">
+      </div>
+      <div class="input-group mb-8">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="••••••••">
+      </div>
+      
+      <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: 1rem;">Sign In</button>
+    </form>
+
+    <div class="text-center mt-8">
+      <a href="#" id="toggle-mode" style="color: var(--text-secondary); text-decoration: none; font-weight: 500;">
+        Need an account? <span style="color: var(--blue);">Sign Up</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

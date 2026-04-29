@@ -9,6 +9,7 @@ from typing import Optional
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator
 
 from app.agents.scoring_agent import compute_score
@@ -46,6 +47,9 @@ MAX_HISTORY = 10
 # ── App ────────────────────────────────────────────────────────────────────────
 app = FastAPI(title="Food Intervention API", version="3.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET","POST"], allow_headers=["Content-Type"])
+app.mount("/css", StaticFiles(directory="css"), name="css")
+if Path("assets").exists():
+    app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 # ── Models ─────────────────────────────────────────────────────────────────────
 class AnalyzeRequest(BaseModel):
@@ -131,6 +135,14 @@ async def validation_error(request: Request, exc):
 @app.get("/")
 def serve_ui():
     return FileResponse("index.html")
+
+@app.get("/auth")
+def serve_auth():
+    return FileResponse("auth.html")
+
+@app.get("/app")
+def serve_app():
+    return FileResponse("app.html")
 
 @app.get("/health")
 def health():
