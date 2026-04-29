@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, setPersistence, browserLocalPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "YOUR_API_KEY", authDomain: "YOUR_PROJECT_ID.firebaseapp.com" };
     let auth = null;
@@ -23,6 +23,7 @@
       const submitBtn = document.getElementById("submit-btn");
       const toggleLink = document.getElementById("toggle-mode");
       const errorMsg = document.getElementById("error-msg");
+      const keepSignedIn = document.getElementById("keep-signed-in");
       let isSignUp = false;
 
       toggleLink.addEventListener("click", (e) => {
@@ -42,17 +43,29 @@
         
         if (!auth) {
           setTimeout(() => {
-            localStorage.setItem("fg_token", "dummy_firebase_token_123");
+            // Mock logic
+            if(keepSignedIn.checked) {
+              localStorage.setItem("fg_token", "dummy_firebase_token_123");
+            } else {
+              sessionStorage.setItem("fg_token", "dummy_firebase_token_123");
+            }
             window.location.href = "/app";
           }, 800);
           return;
         }
 
         try {
+          // Firebase logic
+          const persistenceType = keepSignedIn.checked ? browserLocalPersistence : browserSessionPersistence;
+          await setPersistence(auth, persistenceType);
+
           let userCredential;
           if (isSignUp) { userCredential = await createUserWithEmailAndPassword(auth, email, password); } 
           else { userCredential = await signInWithEmailAndPassword(auth, email, password); }
-          localStorage.setItem("fg_token", await userCredential.user.getIdToken());
+          
+          if(keepSignedIn.checked) localStorage.setItem("fg_token", await userCredential.user.getIdToken());
+          else sessionStorage.setItem("fg_token", await userCredential.user.getIdToken());
+          
           window.location.href = "/app";
         } catch (error) {
           errorMsg.textContent = error.message; errorMsg.style.display = "block";
@@ -63,9 +76,9 @@
   </script>
 </head>
 <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-  <nav class="stagger-1">
+  <header class="stagger-1">
     <a href="/" class="logo">🥗 FoodGuard</a>
-  </nav>
+  </header>
 
   <div class="card stagger-2" style="width: 100%; max-width: 420px; margin: 1rem; padding: 3rem 2.5rem; box-shadow: var(--shadow-md);">
     <div class="text-center mb-8">
@@ -80,9 +93,13 @@
         <label for="email">Email Address</label>
         <input type="email" id="email" required placeholder="you@example.com">
       </div>
-      <div class="input-group mb-8">
+      <div class="input-group mb-4">
         <label for="password">Password</label>
         <input type="password" id="password" required placeholder="••••••••">
+      </div>
+      <div class="input-group mb-8" style="display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="keep-signed-in" style="width: auto; padding: 0;">
+        <label for="keep-signed-in" style="margin-bottom: 0; text-transform: none; letter-spacing: normal; cursor: pointer; color: var(--text);">Keep me signed in</label>
       </div>
       
       <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; padding: 1.1rem; border-radius: 12px; font-size: 1.1rem;">Sign In</button>
